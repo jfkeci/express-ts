@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-//import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt'
 
 export interface UserDoc extends mongoose.Document {
     email: string;
@@ -16,6 +16,12 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true, minLength: 6 }
 }, { timestamps: true })
 
-const User = mongoose.model('User', userSchema)
+userSchema.methods.comparePassword = async function (candidatePassword: string) {
+    const user = this as UserDoc;
+
+    return bcrypt.compare(candidatePassword, user.password).catch((e) => false)
+}
+
+const User = mongoose.model<UserDoc>('User', userSchema)
 
 export default User
