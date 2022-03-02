@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import compression from 'compression';
 import cors from 'cors';
 import morgan from 'morgan';
-import Controller from '@utils/interfaces/controller.interface';
-import ErrorMiddleware from '@middleware/error.middleware';
+import Controller from '@/utils/interfaces/controller.interface';
+import ErrorMiddleware from '@/middleware/error.middleware';
 import helmet from 'helmet';
 
 class App {
@@ -43,7 +43,7 @@ class App {
     private initDbConnection():void{
         const {DB_URI} = process.env
 
-        mongoose.connect(`${DB_URI}`)
+        mongoose.connect(`${DB_URI}`).then(()=>console.log('Connected to database'))
     }
 
     public listen():void{
