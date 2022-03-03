@@ -6,7 +6,8 @@ function validateEnv(): void {
             choices: ['development', 'production']
         }),
         DB_URI: str(),
-        PORT: port({default: 3000})
+        PORT: port({default: 3000}),
+        SECRET: str()
     })
 }
 
