@@ -1,16 +1,16 @@
 import dotenv from 'dotenv'
 import express from 'express'
+
 import config from 'config'
-import { connectDb } from './utils/dbConnect'
-dotenv.config()
+import dbConnect from './utils/dbConnect';
+import log from './utils/logger';
 
+const app = express();
 
-const app = express()
-
-const port = process.env.PORT || 3000
+const port = config.get('port');
 
 app.listen(port, () => {
-    console.log(`App started at port ${port}`)
+    log.info(`Server started @${port}`)
 
-    connectDb()
+    dbConnect();
 })

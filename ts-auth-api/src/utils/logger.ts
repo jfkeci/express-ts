@@ -1,15 +1,18 @@
-import logger from 'pino'
-import dayjs from 'dayjs'
+import logger from "pino";
+import dayjs from "dayjs";
+import config from "config";
 
-const level = 'info'
+const level = config.get<string>("logLevel");
 
-export const log = logger({
+const log = logger({
     transport: {
-        target: 'pino-pretty'
+        target: "pino-pretty",
     },
-    level: level,
+    level,
     base: {
-        pid: false
+        pid: false,
     },
-    timestamp: () => `, time: ${dayjs().format()}`
-})
+    timestamp: () => `,"time":"${dayjs().format()}"`,
+});
+
+export default log;
