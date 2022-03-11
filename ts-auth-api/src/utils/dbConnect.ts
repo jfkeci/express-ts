@@ -11,8 +11,8 @@ async function dbConnect() {
         mongoose.connect(`mongodb+srv://${dbUser}:${dbPass}@cluster0.gg0cz.mongodb.net/${dbName}?retryWrites=true&w=majority`)
             .then(() => { log.info('connected to db') })
     } catch (error) {
-        process.exit(1);
+        process.exit(1)
     }
 }
 
-export default dbConnect;
+export default dbConnect

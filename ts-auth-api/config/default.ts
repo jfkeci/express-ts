@@ -2,7 +2,7 @@ export default {
     port: 3000,
     dbUser: 'jfkecix',
     dbPass: '123keci321',
-    dbName: 'sportsdb',
+    dbName: 'authdb',
     logLevel: 'info',
     accessTokenPrivateKey: "",
     refreshTokenPrivateKey: "",
