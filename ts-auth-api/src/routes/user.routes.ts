@@ -2,7 +2,7 @@ import express from 'express'
 
 const router = express.Router()
 
-router.post('/api/users', (req, res) => {
+router.post('/users', (req, res) => {
     res.send('User')
 })
 
