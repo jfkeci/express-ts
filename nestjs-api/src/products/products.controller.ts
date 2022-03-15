@@ -1,4 +1,5 @@
-import { Controller, Post, Body, Get } from "@nestjs/common";
+import { Controller, Post, Body, Get, Param, NotFoundException, Patch } from "@nestjs/common";
+import { NotFoundError } from "rxjs";
 import { Product } from "./product.model";
 import { ProductService } from "./products.service";
 
@@ -22,5 +23,22 @@ export class ProductsController {
     @Get()
     getProducts(): Product[] {
         return this.productService.getProducts();
+    }
+
+    @Get(':id')
+    getProduct(@Param('id') id: string) {
+        return this.productService.getProduct(id);
+    }
+
+    @Patch(':id')
+    updateProduct(
+        @Param('id') id: string,
+        @Body('title') productTitle: string,
+        @Body('description') productDescription: string,
+        @Body('price') productPrice: number
+    ) {
+        return this.productService.updateProduct(
+            id, productTitle, productDescription, productPrice
+        );
     }
 }
