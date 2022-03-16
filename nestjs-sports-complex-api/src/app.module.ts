@@ -7,6 +7,8 @@ import { SportsModule } from './sports/sports.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { SportsClassesModule } from './sports-classes/sports-classes.module';
+import { RatingsModule } from './ratings/ratings.module';
 
 console.log(process.env.DB_USER)
 
@@ -20,6 +22,8 @@ console.log(process.env.DB_USER)
     EnrollmentsModule,
     UserModule,
     AuthModule,
+    SportsClassesModule,
+    RatingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
