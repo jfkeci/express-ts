@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { nanoid } from "nanoid";
 
 export type UserDocument = User & Document;
 
@@ -16,7 +17,7 @@ export class User {
     @Prop({})
     role: string;
 
-    @Prop({})
+    @Prop({ default: () => nanoid() })
     confirmationCode: string;
 
     @Prop({})

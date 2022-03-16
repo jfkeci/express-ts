@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt'
 import { NewUserDto } from 'src/user/dtos/new-user.dto';
 import { UserInterface } from 'src/user/user.interface';
 import { UserDocument } from 'src/user/user.model';
+import { ExistingUserDTO } from 'src/user/dtos/existing-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,10 +14,11 @@ export class AuthService {
         return bcrypt.hash(password, 12)
     }
 
-    async registerUser(
-        user: Readonly<NewUserDto>
+    async register(
+        user: Readonly<NewUserDto>,
+        role: Readonly<string>
     ): Promise<UserDocument | void> {
-        const { name, email, password, role } = user;
+        const { name, email, password } = user;
 
         const existingUser = await this.userService.findByEmail(email);
 
