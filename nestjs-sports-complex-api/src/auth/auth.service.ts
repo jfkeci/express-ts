@@ -15,7 +15,6 @@ export class AuthService {
         return await bcrypt.hash(password, 10);
     }
 
-    @HttpCode(201)
     async register(
         user: Readonly<NewUserDTO>,
         role: Readonly<string>
@@ -75,4 +74,8 @@ export class AuthService {
             throw new HttpException(error.message, 500)
         }
     }
+
+    async login() { }
+    async refresh() { }
+    async logout() { }
 }
