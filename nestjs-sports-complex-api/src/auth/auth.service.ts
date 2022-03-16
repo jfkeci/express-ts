@@ -1,33 +1,53 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt'
-import { NewUserDto } from 'src/user/dtos/new-user.dto';
-import { UserInterface } from 'src/user/user.interface';
-import { UserDocument } from 'src/user/user.model';
-import { ExistingUserDTO } from 'src/user/dtos/existing-user.dto';
+import { NewUserDTO } from 'src/user/dto/user.dto';
+import { User } from 'src/user/user.model';
+import { ExistingUserDTO } from 'src/user/dto/user.dto';
+import { sendEmail } from 'src/utils/mailer';
 
 @Injectable()
 export class AuthService {
     constructor(private userService: UserService) { }
 
     async hashPassword(password: string): Promise<string> {
-        return bcrypt.hash(password, 12)
+        return await bcrypt.hash(password, 10);
     }
 
+    @HttpCode(201)
     async register(
-        user: Readonly<NewUserDto>,
+        user: Readonly<NewUserDTO>,
         role: Readonly<string>
-    ): Promise<UserDocument | void> {
-        const { name, email, password } = user;
+    ): Promise<string | void> {
+        try {
+            const { name, email, password } = user;
 
-        const existingUser = await this.userService.findByEmail(email);
+            const existingUser = await this.userService.findByEmail(email);
 
-        if (existingUser) throw new HttpException('Email taken', HttpStatus.CONFLICT);
+            if (existingUser) throw new HttpException('Email taken', HttpStatus.CONFLICT);
 
-        const hash = await this.hashPassword(password);
+            const hash = await this.hashPassword(password);
 
-        const newUser = this.userService.create(name, email, hash, role);
+            const newUser = await this.userService.create(name, email, hash, role);
 
-        return newUser;
+            if (!newUser) throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+
+            await sendEmail({
+                from: 'sportscomplex@info.com',
+                to: email,
+                subject: 'SportsComplex account verification',
+                html: `<html><h1>Confirm account</h1>
+                        <br><hr><br>
+                        <h3>Verification code: ${newUser.verificationCode}</h3>
+                        <br><br>
+                        <h4>Click here: <a href="http://localhost:13374/api/users/verify/${newUser._id}/${newUser.verificationCode}">
+                        Confirm Email
+                        </a></h4></html>`
+            });
+
+            return 'Successfully registered, confirm email';
+        } catch (error: any) {
+            throw new HttpException(error.message, 500);
+        }
     }
 }

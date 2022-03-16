@@ -1,19 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserInterface } from './user.interface';
-import { UserDocument } from './user.model';
+import { User, UserSchema } from './user.model';
+
 
 @Injectable()
 export class UserService {
-    constructor(@InjectModel('User') private readonly userModel: Model<UserDocument>) { }
+    constructor(@InjectModel('User') private readonly userModel: Model<User>) { }
 
     async create(
         name: string,
         email: string,
         password: string,
         role: string
-    ): Promise<UserDocument> {
+    ): Promise<User> {
         const newUser = await new this.userModel({
             name,
             email,
@@ -24,13 +24,13 @@ export class UserService {
         return newUser;
     }
 
-    async getAll(): Promise<UserDocument[]> {
+    async getAll(): Promise<User[]> {
         const users = await this.userModel.find();
 
         return users;
     }
 
-    async findById(_id: string): Promise<UserDocument | null> {
+    async findById(_id: string): Promise<User | null> {
         const user = await this.userModel.findOne({ _id });
 
         if (!user) return null;
@@ -38,7 +38,7 @@ export class UserService {
         return user;
     }
 
-    async findByEmail(email: string): Promise<UserDocument | null> {
+    async findByEmail(email: string): Promise<User | null> {
         const user = await this.userModel.findOne({ email });
 
         if (!user) return null;

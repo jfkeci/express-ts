@@ -1,30 +1,52 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import mongoose from "mongoose";
 import { nanoid } from "nanoid";
+import * as bcrypt from 'bcrypt'
 
-export type UserDocument = User & Document;
+export const UserSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true
+    },
+    password: {
+        type: String,
+    },
+    verificationCode: {
+        type: String,
+        default: () => nanoid()
+    },
+    passwordResetCode: {
+        type: String,
+    },
+    verified: {
+        type: Boolean,
+        default: false
+    },
+    role: {
+        type: String,
+        required: true
+    }
+}, { timestamps: true })
 
-@Schema()
-export class User {
-    @Prop({ required: true })
-    name: string;
-
-    @Prop({ required: true, unique: true })
+export interface User extends Document {
+    _id: string;
     email: string;
-
-    @Prop({ required: true })
+    name: string;
     password: string;
-
-    @Prop({})
     role: string;
-
-    @Prop({ default: () => nanoid() })
-    confirmationCode: string;
-
-    @Prop({})
+    verificationCode: string;
     passwordResetCode: string;
-
-    @Prop({ default: false })
     verified: boolean;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+UserSchema.methods.isValidPassword = async function (
+    password: string
+): Promise<Error | boolean> {
+    return await bcrypt.compare(password, this.password);
+}
