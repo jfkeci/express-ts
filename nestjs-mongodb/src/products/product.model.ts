@@ -1,11 +1,27 @@
+import * as mongoose from 'mongoose';
 
-export class Product {
+export const ProductSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true,
+        min: 2,
+        max: 255
+    },
+    description: {
+        type: String,
+        required: true,
+        min: 2,
+        max: 255
+    },
+    price: {
+        type: Number,
+        required: true,
+    }
+}, { timestamps: true });
 
-    constructor(
-        public id: string,
-        public title: string,
-        public description: string,
-        public price: number,
-    ) { }
-
+export interface Product {
+    id: string,
+    title: string,
+    description: string,
+    price: number,
 }

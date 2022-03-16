@@ -1,11 +1,31 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './product.model';
 
 @Injectable()
 export class ProductsService {
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+
+  constructor(
+    @InjectModel('Product') private readonly product: Model<Product>
+  ) { }
+
+  async create(
+    title: string,
+    description: string,
+    price: number
+  ) {
+    const newProduct = new this.product({
+      title: title,
+      description: description,
+      price: price
+    });
+
+    const result = await newProduct.save();
+
+    return result;
   }
 
   findAll() {
