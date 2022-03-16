@@ -14,12 +14,15 @@ export class User {
     password: string;
 
     @Prop({})
+    role: string;
+
+    @Prop({})
     confirmationCode: string;
 
     @Prop({})
     passwordResetCode: string;
 
-    @Prop({})
+    @Prop({ default: false })
     verified: boolean;
 }
 

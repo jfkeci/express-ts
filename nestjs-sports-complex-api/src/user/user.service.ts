@@ -12,12 +12,13 @@ export class UserService {
         name: string,
         email: string,
         password: string,
-
+        role: string
     ): Promise<UserDocument> {
         const newUser = await new this.userModel({
             name,
             email,
-            password
+            password,
+            role
         }).save();
 
         return newUser;
@@ -29,11 +30,23 @@ export class UserService {
         return users;
     }
 
-    async getOne(_id: string): Promise<UserDocument> {
+    async findById(_id: string): Promise<UserDocument | null> {
         const user = await this.userModel.findOne({ _id });
+
+        if (!user) return null;
 
         return user;
     }
+
+    async findByEmail(email: string): Promise<UserDocument | null> {
+        const user = await this.userModel.findOne({ email });
+
+        if (!user) return null;
+
+        return user;
+    }
+
+
 
     async delete(_id: string): Promise<boolean> {
         const deletedUser = await this.userModel.findByIdAndRemove(_id);
