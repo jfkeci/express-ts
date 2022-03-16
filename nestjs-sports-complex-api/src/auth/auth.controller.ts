@@ -3,6 +3,7 @@ import { NewUserDTO } from 'src/user/dto/user.dto';
 import { sendEmail } from 'src/utils/mailer';
 import { AuthService } from './auth.service';
 import { ForgotPasswordDTO } from './dto/forgot-password.dto';
+import { ResetPasswordBodyDTO, ResetPasswordParamsDTO } from './dto/reset-password.dto';
 import { VerifyUserDTO } from './dto/verify-user.dto';
 
 @Controller('auth')
@@ -37,6 +38,15 @@ export class AuthController {
         return await this.authService.forgotPasswordHandler(data);
     }
 
+    @Post('/password/reset/:id/:passwordResetCode')
+    @HttpCode(200)
+    @UsePipes(new ValidationPipe())
+    async resetPassword(
+        @Param() param: ResetPasswordParamsDTO,
+        @Body() body: ResetPasswordBodyDTO
+    ) {
+        return await this.authService.resetPassword(param, body);
+    }
 
 
     @Get('test')

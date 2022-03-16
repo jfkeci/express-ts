@@ -7,6 +7,9 @@ import { ExistingUserDTO } from 'src/user/dto/user.dto';
 import { sendEmail } from 'src/utils/mailer';
 import { VerifyUserDTO } from './dto/verify-user.dto';
 import { nanoid } from 'nanoid';
+import { ForgotPasswordDTO } from './dto/forgot-password.dto';
+import { ResetPasswordParamsDTO, ResetPasswordBodyDTO } from './dto/reset-password.dto';
+import { isValidId } from 'src/utils/validation.utils';
 
 @Injectable()
 export class AuthService {
@@ -76,7 +79,7 @@ export class AuthService {
         }
     }
 
-    async forgotPasswordHandler(data): Promise<string | void> {
+    async forgotPasswordHandler(data: ForgotPasswordDTO): Promise<string | void> {
         const { email } = data;
 
         const user = await this.userService.findByEmail(email);
@@ -107,6 +110,52 @@ export class AuthService {
         });
 
         return 'If user with this email is registered, you will recieve a password reset email';
+    }
+
+    async resetPassword(
+        params: ResetPasswordParamsDTO,
+        body: ResetPasswordBodyDTO
+    ) {
+        const { id, passwordResetCode } = params;
+        const { password, confirmPassword } = body;
+
+        if (password !== confirmPassword) throw new HttpException(
+            'Passwords do not match', 409
+        );
+
+        if (!isValidId(id)) throw new HttpException('Invalid id', 409);
+
+        const user = await this.userService.findById(id);
+
+        if (!user) throw new HttpException('User not found', 404);
+
+        if (!user.passwordResetCode || user.passwordResetCode != passwordResetCode) {
+            throw new HttpException('Bad request', 400);
+        }
+
+        user.passwordResetCode = '';
+
+        const hash = await bcrypt.hash(password, 10);
+
+        user.password = hash;
+
+        const updatedUser = await this.userService.update(id, user);
+
+        if (!updatedUser) throw new HttpException('Something went wrong', 400);
+
+        await sendEmail({
+            from: 'sportscomplex@info.com',
+            to: user.email,
+            subject: "Password reset confirmation",
+            html: `<html>
+                    <h1>Password reset</h1>
+                    <br><hr><br>
+                    <h3>Your password was successfully changed</h3>
+                    <br><br>
+                    </html>`,
+        });
+
+        return "Successfully updated password";
     }
 
     async login() { }
