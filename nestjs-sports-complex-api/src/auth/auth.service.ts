@@ -1,10 +1,11 @@
-import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpCode, HttpException, HttpStatus, Injectable, Param } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt'
 import { NewUserDTO } from 'src/user/dto/user.dto';
 import { User } from 'src/user/user.model';
 import { ExistingUserDTO } from 'src/user/dto/user.dto';
 import { sendEmail } from 'src/utils/mailer';
+import { VerifyUserDTO } from './dto/verify-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -48,6 +49,30 @@ export class AuthService {
             return 'Successfully registered, confirm email';
         } catch (error: any) {
             throw new HttpException(error.message, 500);
+        }
+    }
+
+    async verifyUser(@Param() data: VerifyUserDTO): Promise<string | void> {
+        try {
+            const { id, verificationCode } = data;
+
+            const user = await this.userService.findById(id);
+
+            if (!user) throw new HttpException('No user found', 404);
+
+            if (user.verified) throw new HttpException('User already verified', 409);
+
+            if (user.verificationCode === verificationCode) {
+                user.verified = true;
+
+                await this.userService.update(id, user);
+
+                return 'User successfully verified';
+            }
+
+            throw new HttpException('Could not be updated', 400);
+        } catch (error: any) {
+            throw new HttpException(error.message, 500)
         }
     }
 }

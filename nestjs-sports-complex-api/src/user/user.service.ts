@@ -10,7 +10,6 @@ import { User, UserSchema } from './user.model';
 export class UserService {
     constructor(@InjectModel('User') private readonly userModel: Model<User>) { }
 
-    @HttpCode(201)
     async create(
         name: string,
         email: string,
@@ -71,21 +70,10 @@ export class UserService {
 
     async update(
         _id: string,
-        name: string,
-        password: string,
+        user: User
     ): Promise<User | void> {
         try {
             if (!isValidId(_id)) throw new HttpException('Invalid id', 409);
-
-            const user = await this.findById(_id);
-
-            if (!user) throw new HttpException('User not found', 404);
-
-            if (name) user.name = name;
-            if (password) {
-                const hash = await bcrypt.hash(password, 10);
-                user.password = hash;
-            }
 
             const updatedUser = this.userModel.findByIdAndUpdate(_id, user);
 
@@ -96,4 +84,6 @@ export class UserService {
             throw new HttpException(error.message, 500);
         }
     }
+
+    async verify() { }
 }

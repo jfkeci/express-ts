@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch } from '@nestjs/common';
 import { User } from './user.model';
 import { UserService } from './user.service';
 
@@ -13,19 +13,23 @@ export class UserController {
     }
 
     @Get()
+    @HttpCode(200)
     async getById(@Param('id') id: string) {
         return await this.userService.findById(id);
     }
 
+    @Delete()
+    @HttpCode(204)
     async delete(@Param('id') id: string) {
         return await this.userService.delete(id);
     }
 
+    @Patch()
+    @HttpCode(200)
     async update(
         @Param('id') id: string,
-        @Body('name') name: string,
-        @Body('password') password: string
+        @Body() user: User
     ) {
-        return await this.userService.update(id, name, password);
+        return await this.userService.update(id, user);
     }
 }
