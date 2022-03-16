@@ -28,19 +28,43 @@ export class ProductsService {
     return result;
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll() {
+    const products = await this.product.find({}).exec();
+
+    return products.map((prod) => ({
+      id: prod.id,
+      title: prod.title,
+      description: prod.description,
+      price: prod.price
+    }));
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(_id: string) {
+    const product = await this.product.findById(_id);
+
+    return product
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(
+    _id: string,
+    title: string,
+    description: string,
+    price: number
+  ) {
+    const product = await this.findOne(_id);
+
+    if (title) product.title = title;
+    if (description) product.description = description;
+    if (price) product.price = price;
+
+    const updatedProduct = product.save();
+
+    return updatedProduct;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(_id: string) {
+    const deletedProduct = await this.product.findByIdAndDelete(_id);
+
+    return deletedProduct;
   }
 }
