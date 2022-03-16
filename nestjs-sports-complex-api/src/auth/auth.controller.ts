@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, Param, Post, UsePipes, ValidationPipe 
 import { NewUserDTO } from 'src/user/dto/user.dto';
 import { sendEmail } from 'src/utils/mailer';
 import { AuthService } from './auth.service';
+import { ForgotPasswordDTO } from './dto/forgot-password.dto';
 import { VerifyUserDTO } from './dto/verify-user.dto';
 
 @Controller('auth')
@@ -28,6 +29,15 @@ export class AuthController {
     async verifyUser(@Param() data: VerifyUserDTO) {
         return await this.authService.verifyUser(data);
     }
+
+    @Get('password/forgot')
+    @HttpCode(200)
+    @UsePipes(new ValidationPipe())
+    async forgotPassword(@Body() data: ForgotPasswordDTO) {
+        return await this.authService.forgotPasswordHandler(data);
+    }
+
+
 
     @Get('test')
     async test() {

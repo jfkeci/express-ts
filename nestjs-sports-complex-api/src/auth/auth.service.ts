@@ -6,6 +6,7 @@ import { User } from 'src/user/user.model';
 import { ExistingUserDTO } from 'src/user/dto/user.dto';
 import { sendEmail } from 'src/utils/mailer';
 import { VerifyUserDTO } from './dto/verify-user.dto';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class AuthService {
@@ -73,6 +74,39 @@ export class AuthService {
         } catch (error: any) {
             throw new HttpException(error.message, 500)
         }
+    }
+
+    async forgotPasswordHandler(data): Promise<string | void> {
+        const { email } = data;
+
+        const user = await this.userService.findByEmail(email);
+
+        if (!user) throw new HttpException('User not found', 404);
+
+        if (!user.verified) throw new HttpException('User not verified', 409);
+
+        const resetCode = nanoid();
+
+        user.passwordResetCode = resetCode;
+
+        const updatedUser = await this.userService.update(user._id, user);
+
+        if (!updatedUser) throw new HttpException('Something went wrong', 400);
+
+        await sendEmail({
+            from: 'sportscomplex@info.com',
+            to: user.email,
+            subject: "Reset your password",
+            html: `<html>
+            <h1>Password reset</h1>
+            <br><hr><br>
+            <h3>Password reset code: ${resetCode} </h3>
+            <br><br>
+            <h3>Id: ${user._id} </h3>
+            </html>`,
+        });
+
+        return 'If user with this email is registered, you will recieve a password reset email';
     }
 
     async login() { }
