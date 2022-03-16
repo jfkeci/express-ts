@@ -1,4 +1,3 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
 import { nanoid } from "nanoid";
 import * as bcrypt from 'bcrypt'
@@ -32,7 +31,7 @@ export const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     }
-}, { timestamps: true })
+}, { timestamps: true });
 
 export interface User extends Document {
     _id: string;

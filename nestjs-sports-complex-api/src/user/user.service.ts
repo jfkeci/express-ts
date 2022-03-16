@@ -1,9 +1,8 @@
-import { HttpCode, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { isValidId } from 'src/utils/validation.utils';
-import * as bcrypt from 'bcrypt';
-import { User, UserSchema } from './user.model';
+import { User } from './user.model';
 
 
 @Injectable()
@@ -22,6 +21,8 @@ export class UserService {
             password,
             role
         }).save();
+
+        if (!newUser) throw new HttpException('Something went wrong', 400);
 
         return newUser;
     }
