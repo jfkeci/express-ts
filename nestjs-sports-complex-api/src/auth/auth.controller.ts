@@ -1,8 +1,10 @@
-import { Body, Controller, Get, HttpCode, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { NewUserDTO } from 'src/user/dto/user.dto';
 import { sendEmail } from 'src/utils/mailer';
 import { AuthService } from './auth.service';
 import { ForgotPasswordDTO } from './dto/forgot-password.dto';
+import { LoginUserDTO } from './dto/login-user.dto';
 import { ResetPasswordBodyDTO, ResetPasswordParamsDTO } from './dto/reset-password.dto';
 import { VerifyUserDTO } from './dto/verify-user.dto';
 
@@ -48,7 +50,15 @@ export class AuthController {
         return await this.authService.resetPassword(param, body);
     }
 
+    @Post('login')
+    @HttpCode(200)
+    @UsePipes(new ValidationPipe())
+    async login(@Body() dto: LoginUserDTO) {
+        return await this.authService.login(dto);
+    }
 
+
+    @UseGuards(AuthGuard('jwt-u')) // user auth
     @Get('test')
     async test() {
         return 'email';

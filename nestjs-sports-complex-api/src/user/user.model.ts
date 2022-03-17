@@ -42,6 +42,8 @@ export interface User extends Document {
     verificationCode: string;
     passwordResetCode: string;
     verified: boolean;
+
+    isValidPassword(password: string): Promise<Error | boolean>;
 }
 
 UserSchema.methods.isValidPassword = async function (

@@ -1,19 +1,22 @@
-import { HttpCode, HttpException, HttpStatus, Injectable, Param } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Param, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt'
 import { NewUserDTO } from 'src/user/dto/user.dto';
-import { User } from 'src/user/user.model';
-import { ExistingUserDTO } from 'src/user/dto/user.dto';
 import { sendEmail } from 'src/utils/mailer';
 import { VerifyUserDTO } from './dto/verify-user.dto';
 import { nanoid } from 'nanoid';
 import { ForgotPasswordDTO } from './dto/forgot-password.dto';
 import { ResetPasswordParamsDTO, ResetPasswordBodyDTO } from './dto/reset-password.dto';
 import { isValidId } from 'src/utils/validation.utils';
+import { LoginUserDTO } from './dto/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UserService) { }
+    constructor(
+        private userService: UserService,
+        private jwtService: JwtService
+    ) { }
 
     async hashPassword(password: string): Promise<string> {
         return await bcrypt.hash(password, 10);
@@ -158,7 +161,39 @@ export class AuthService {
         return "Successfully updated password";
     }
 
-    async login() { }
+    async login(dto: LoginUserDTO) {
+        const { email, password } = dto;
+
+        const user = await this.userService.findByEmail(email);
+
+        if (!user) throw new UnauthorizedException('Invalid credentials');
+
+        if (!await user.isValidPassword(password)) throw new UnauthorizedException(
+            'Invalid credentials'
+        );
+
+        const token = await this.signUser(
+            user._id,
+            user.email,
+            user.role
+        );
+
+        return { token: token };
+    }
+
+    async signUser(
+        userId: string,
+        email: string,
+        type: string,
+    ) {
+        return await this.jwtService.sign({
+            sub: userId,
+            email,
+            type: type
+        })
+    }
+
+
     async refresh() { }
     async logout() { }
 }
