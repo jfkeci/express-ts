@@ -18,7 +18,7 @@ export class AuthController {
     }
 
     @Get()
-    @UseGuards(AuthGuard('jwt12'))
+    @UseGuards(AuthGuard('jwt'))
     test() {
         return [
             {
