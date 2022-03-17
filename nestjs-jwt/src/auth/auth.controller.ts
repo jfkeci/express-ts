@@ -1,4 +1,5 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "./auth.service";
 import { AuthDTO } from "./dto/auth.dto";
 
@@ -14,5 +15,24 @@ export class AuthController {
     @Post('register')
     registerLocal(@Body() dto: AuthDTO) {
         return this.authService.registerLocal(dto);
+    }
+
+    @Get()
+    @UseGuards(AuthGuard('jwt12'))
+    test() {
+        return [
+            {
+                id: 1,
+                name: 'iivanovic'
+            },
+            {
+                id: 2,
+                name: 'mmarkovic'
+            },
+            {
+                id: 3,
+                name: 'jjovanovic'
+            }
+        ];
     }
 }
