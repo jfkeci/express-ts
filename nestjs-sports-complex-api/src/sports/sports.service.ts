@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { SportDTO } from './dto/sport.dto';
 import { Sport } from './sport.model';
 import { Model } from 'mongoose';
+import { validateId } from 'src/utils/validation.utils';
+import { isFullWidth } from 'class-validator';
 
 @Injectable()
 export class SportsService {
@@ -13,7 +15,7 @@ export class SportsService {
     try {
       const { name } = dto;
 
-      const sport = this.findByName(name);
+      const sport = await this.findByName(name);
 
       if (sport) throw new HttpException('Sport already exists', 409);
 
@@ -29,25 +31,69 @@ export class SportsService {
     }
   }
 
-  findAll() {
-    return `This action returns all sports`;
+  async findAll(): Promise<Sport[] | void> {
+    try {
+      const sports = await this.sportModel.find();
+
+      if (!sports) throw new HttpException('No sports found', 404);
+
+      return sports;
+    } catch (error: any) {
+      throw new HttpException(error.message, 500);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} sport`;
+  async findOne(_id: string): Promise<Sport | void> {
+    try {
+      validateId(_id);
+
+      const sport = await this.sportModel.findOne({ _id });
+
+      if (!sport) throw new HttpException('No sport found', 404);
+
+      return sport;
+    } catch (error: any) {
+      throw new HttpException(error.message, 500)
+    }
   }
 
-  update(id: number, dto: SportDTO) {
-    return `This action updates a #${id} sport`;
+  async update(_id: string, dto: SportDTO) {
+    try {
+      validateId(_id);
+
+      const sport = await this.sportModel.findOne({ _id });
+
+      if (!sport) throw new HttpException('Sport not found', 404);
+
+      if (sport && dto.name) sport.name = dto.name
+
+      await sport.save();
+
+      return sport;
+    } catch (error: any) {
+      throw new HttpException(error.message, 500)
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} sport`;
+  async remove(_id: string) {
+    try {
+      validateId(_id);
+
+      const deletedSport = await this.sportModel.findByIdAndRemove(_id);
+
+      if (!deletedSport) throw new HttpException('Something went wrong', 400);
+
+      return 'Sport successfully deleted';
+    } catch (error: any) {
+      throw new HttpException(error.message, 500)
+    }
+
+
   }
 
   async findByName(name: string): Promise<Sport> {
     try {
-      const sport = this.sportModel.findOne({ name: name });
+      const sport = await this.sportModel.findOne({ name: name });
 
       return sport;
     } catch (error: any) {
