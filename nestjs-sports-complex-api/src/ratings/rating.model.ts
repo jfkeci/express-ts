@@ -13,10 +13,6 @@ export const RatingSchema = new mongoose.Schema(
             max: 5,
             required: true
         },
-        userId: {
-            type: String,
-            required: true
-        },
         classId: {
             type: String,
             required: true
@@ -27,6 +23,5 @@ export const RatingSchema = new mongoose.Schema(
 export interface Rating extends Document {
     text: string;
     rating: number;
-    userId: string;
     classId: string;
 }

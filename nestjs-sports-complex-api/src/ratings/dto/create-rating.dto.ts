@@ -9,8 +9,5 @@ export class CreateRatingDto {
     rating: number;
     @IsString()
     @IsNotEmpty()
-    userId: string;
-    @IsString()
-    @IsNotEmpty()
     classId: string;
 }
