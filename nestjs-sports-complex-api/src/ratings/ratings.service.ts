@@ -2,13 +2,15 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateRatingDto } from './dto/create-rating.dto';
 import { UpdateRatingDto } from './dto/update-rating.dto';
-import { Model } from 'mongoose'
+import { Model } from 'mongoose';
 import { Rating } from './rating.model';
 import { validateId } from 'src/utils/validation.utils';
 
 @Injectable()
 export class RatingsService {
-  constructor(@InjectModel('Rating') private readonly ratingModel: Model<Rating>) { }
+  constructor(
+    @InjectModel('Rating') private readonly ratingModel: Model<Rating>,
+  ) {}
 
   async create(createRatingDto: CreateRatingDto) {
     try {
@@ -19,10 +21,10 @@ export class RatingsService {
       const newRating = await new this.ratingModel({
         text,
         rating,
-        classId
-      }).save()
+        classId,
+      }).save();
 
-      if (!newRating) throw new HttpException('Couldn\'t create rating', 400);
+      if (!newRating) throw new HttpException("Couldn't create rating", 400);
 
       return newRating;
     } catch (error: any) {

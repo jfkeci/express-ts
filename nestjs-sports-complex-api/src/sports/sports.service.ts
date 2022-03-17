@@ -8,8 +8,9 @@ import { isFullWidth } from 'class-validator';
 
 @Injectable()
 export class SportsService {
-
-  constructor(@InjectModel('Sport') private readonly sportModel: Model<Sport>) { }
+  constructor(
+    @InjectModel('Sport') private readonly sportModel: Model<Sport>,
+  ) {}
 
   async create(dto: SportDTO): Promise<Sport | void> {
     try {
@@ -20,7 +21,7 @@ export class SportsService {
       if (sport) throw new HttpException('Sport already exists', 409);
 
       const newSport = new this.sportModel({
-        name: name
+        name: name,
       }).save();
 
       if (!newSport) throw new HttpException('Something went wrong', 400);
@@ -53,7 +54,7 @@ export class SportsService {
 
       return sport;
     } catch (error: any) {
-      throw new HttpException(error.message, 500)
+      throw new HttpException(error.message, 500);
     }
   }
 
@@ -65,13 +66,13 @@ export class SportsService {
 
       if (!sport) throw new HttpException('Sport not found', 404);
 
-      if (sport && dto.name) sport.name = dto.name
+      if (sport && dto.name) sport.name = dto.name;
 
       await sport.save();
 
       return sport;
     } catch (error: any) {
-      throw new HttpException(error.message, 500)
+      throw new HttpException(error.message, 500);
     }
   }
 
@@ -85,10 +86,8 @@ export class SportsService {
 
       return 'Sport successfully deleted';
     } catch (error: any) {
-      throw new HttpException(error.message, 500)
+      throw new HttpException(error.message, 500);
     }
-
-
   }
 
   async findByName(name: string): Promise<Sport> {

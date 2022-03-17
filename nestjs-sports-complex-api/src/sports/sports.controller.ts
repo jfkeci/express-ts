@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  HttpCode,
+} from '@nestjs/common';
 import { SportsService } from './sports.service';
 import { SportDTO } from './dto/sport.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -6,7 +16,7 @@ import { AdminAuthGuard, PublicAuthGuard } from 'src/auth/guards/auth-guards';
 
 @Controller('sports')
 export class SportsController {
-  constructor(private readonly sportsService: SportsService) { }
+  constructor(private readonly sportsService: SportsService) {}
 
   @Post()
   @HttpCode(201)

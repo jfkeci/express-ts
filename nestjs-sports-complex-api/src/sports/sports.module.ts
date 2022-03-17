@@ -6,11 +6,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: 'Sport', schema: SportSchema }
-    ])
+    MongooseModule.forFeature([{ name: 'Sport', schema: SportSchema }]),
   ],
   controllers: [SportsController],
-  providers: [SportsService]
+  providers: [SportsService],
 })
-export class SportsModule { }
+export class SportsModule {}

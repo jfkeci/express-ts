@@ -1,53 +1,56 @@
-import mongoose from "mongoose";
-import { nanoid } from "nanoid";
-import * as bcrypt from 'bcrypt'
+import mongoose from 'mongoose';
+import { nanoid } from 'nanoid';
+import * as bcrypt from 'bcrypt';
 
-export const UserSchema = new mongoose.Schema({
+export const UserSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
     },
     password: {
-        type: String,
+      type: String,
     },
     verificationCode: {
-        type: String,
-        default: () => nanoid()
+      type: String,
+      default: () => nanoid(),
     },
     passwordResetCode: {
-        type: String,
+      type: String,
     },
     verified: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     role: {
-        type: String,
-        required: true
-    }
-}, { timestamps: true });
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true },
+);
 
 export interface User extends Document {
-    _id: string;
-    email: string;
-    name: string;
-    password: string;
-    role: string;
-    verificationCode: string;
-    passwordResetCode: string;
-    verified: boolean;
+  _id: string;
+  email: string;
+  name: string;
+  password: string;
+  role: string;
+  verificationCode: string;
+  passwordResetCode: string;
+  verified: boolean;
 
-    isValidPassword(password: string): Promise<Error | boolean>;
+  isValidPassword(password: string): Promise<Error | boolean>;
 }
 
 UserSchema.methods.isValidPassword = async function (
-    password: string
+  password: string,
 ): Promise<Error | boolean> {
-    return await bcrypt.compare(password, this.password);
-}
+  return await bcrypt.compare(password, this.password);
+};

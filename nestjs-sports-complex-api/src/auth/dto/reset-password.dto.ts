@@ -1,19 +1,19 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class ResetPasswordParamsDTO {
-    @IsString()
-    @IsNotEmpty()
-    id: string;
-    @IsString()
-    @IsNotEmpty()
-    passwordResetCode: string;
+  @IsString()
+  @IsNotEmpty()
+  id: string;
+  @IsString()
+  @IsNotEmpty()
+  passwordResetCode: string;
 }
 
 export class ResetPasswordBodyDTO {
-    @IsString()
-    @IsNotEmpty()
-    password: string;
-    @IsString()
-    @IsNotEmpty()
-    confirmPassword: string;
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+  @IsString()
+  @IsNotEmpty()
+  confirmPassword: string;
 }

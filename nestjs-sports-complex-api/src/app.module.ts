@@ -10,16 +10,16 @@ import { AuthModule } from './auth/auth.module';
 import { SportsClassesModule } from './sports-classes/sports-classes.module';
 import { RatingsModule } from './ratings/ratings.module';
 
-console.log(process.env.DB_USER)
+console.log(process.env.DB_USER);
 
 @Module({
   imports: [
     SportsModule,
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
     }),
     MongooseModule.forRoot(
-      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.gg0cz.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
+      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.gg0cz.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
     ),
     EnrollmentsModule,
     UserModule,
@@ -30,5 +30,4 @@ console.log(process.env.DB_USER)
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
-
+export class AppModule {}

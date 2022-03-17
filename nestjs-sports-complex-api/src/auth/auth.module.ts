@@ -11,8 +11,8 @@ import { UserJwtStrategy } from './strategy/user.auth.strategy';
   imports: [
     UserModule,
     JwtModule.register({
-      secret: 'nest-sports-api-31k2maaAdS2Kl'
-    })
+      secret: 'nest-sports-api-31k2maaAdS2Kl',
+    }),
   ],
   controllers: [AuthController],
   providers: [
@@ -20,6 +20,6 @@ import { UserJwtStrategy } from './strategy/user.auth.strategy';
     UserJwtStrategy,
     AdminJwtStrategy,
     PublicJwtStrategy,
-  ]
+  ],
 })
-export class AuthModule { }
+export class AuthModule {}

@@ -8,16 +8,19 @@ import { InjectModel } from '@nestjs/mongoose';
 @Injectable()
 export class EnrollmentsService {
   constructor(
-    @InjectModel('Enrollment') private readonly enrollmentModel: Model<Enrollment>
-  ) { }
+    @InjectModel('Enrollment')
+    private readonly enrollmentModel: Model<Enrollment>,
+  ) {}
 
-  async create(createEnrollmentDto: CreateEnrollmentDto): Promise<Enrollment | void> {
+  async create(
+    createEnrollmentDto: CreateEnrollmentDto,
+  ): Promise<Enrollment | void> {
     const { userId, classId } = createEnrollmentDto;
 
     const enrollment = await this.enrollmentModel.create({
       userId: userId,
-      classId: classId
-    })
+      classId: classId,
+    });
 
     if (!enrollment) throw new HttpException('Something went wrong', 400);
 
@@ -33,7 +36,7 @@ export class EnrollmentsService {
   }
 
   async findOne(_id: string): Promise<Enrollment | void> {
-    const enrollment = await this.enrollmentModel.findOne({ _id })
+    const enrollment = await this.enrollmentModel.findOne({ _id });
 
     if (!enrollment) throw new HttpException('No enrollment found', 404);
 
@@ -41,7 +44,8 @@ export class EnrollmentsService {
   }
 
   async update(
-    _id: string, updateEnrollmentDto: UpdateEnrollmentDto
+    _id: string,
+    updateEnrollmentDto: UpdateEnrollmentDto,
   ): Promise<Enrollment | void> {
     try {
       const { userId, classId } = updateEnrollmentDto;
@@ -53,9 +57,13 @@ export class EnrollmentsService {
       enrollment.userId = userId;
       enrollment.classId = classId;
 
-      const updatedEnrollment = await this.enrollmentModel.findByIdAndUpdate(_id, enrollment);
+      const updatedEnrollment = await this.enrollmentModel.findByIdAndUpdate(
+        _id,
+        enrollment,
+      );
 
-      if (!updateEnrollmentDto) throw new HttpException('Something went wrong', 400);
+      if (!updateEnrollmentDto)
+        throw new HttpException('Something went wrong', 400);
 
       return updatedEnrollment;
     } catch (error: any) {

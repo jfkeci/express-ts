@@ -6,11 +6,9 @@ import { RatingSchema } from './rating.model';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: 'Rating', schema: RatingSchema }
-    ])
+    MongooseModule.forFeature([{ name: 'Rating', schema: RatingSchema }]),
   ],
   controllers: [RatingsController],
-  providers: [RatingsService]
+  providers: [RatingsService],
 })
-export class RatingsModule { }
+export class RatingsModule {}
