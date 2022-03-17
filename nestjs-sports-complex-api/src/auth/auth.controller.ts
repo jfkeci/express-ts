@@ -7,6 +7,7 @@ import { ForgotPasswordDTO } from './dto/forgot-password.dto';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { ResetPasswordBodyDTO, ResetPasswordParamsDTO } from './dto/reset-password.dto';
 import { VerifyUserDTO } from './dto/verify-user.dto';
+import { AdminAuthGuard, UserAuthGuard } from './guards/auth-guards';
 
 @Controller('auth')
 export class AuthController {
@@ -58,9 +59,22 @@ export class AuthController {
     }
 
 
-    @UseGuards(AuthGuard('jwt-u')) // user auth
+    @UseGuards(AdminAuthGuard) // user auth
     @Get('test')
     async test() {
-        return 'email';
+        return [
+            {
+                id: 1,
+                name: 'iivanovic'
+            },
+            {
+                id: 2,
+                name: 'mmarkovic'
+            },
+            {
+                id: 3,
+                name: 'jjovanovic'
+            }
+        ];
     }
 }

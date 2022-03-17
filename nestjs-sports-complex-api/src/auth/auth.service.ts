@@ -181,11 +181,7 @@ export class AuthService {
         return { token: token };
     }
 
-    async signUser(
-        userId: string,
-        email: string,
-        type: string,
-    ) {
+    async signUser(userId: string, email: string, type: string,) {
         return await this.jwtService.sign({
             sub: userId,
             email,
@@ -193,7 +189,5 @@ export class AuthService {
         })
     }
 
-
-    async refresh() { }
     async logout() { }
 }

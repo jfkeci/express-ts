@@ -4,7 +4,7 @@ import { ExtractJwt, Strategy } from "passport-jwt";
 
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-p') {
+export class AdminJwtStrategy extends PassportStrategy(Strategy, 'jwt-a') {
     constructor() {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -14,6 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-p') {
     }
 
     async validate(payload: any) {
+        console.log(payload)
         if (payload.type == 'admin') return payload;
     }
 }
