@@ -1,0 +1,103 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String     @id @unique() @default(cuid())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @default(now())
+  name       String     @db.VarChar(125)
+  surname    String     @db.VarChar(125)
+  email      String     @unique @db.VarChar(125)
+  password   String     @db.VarChar(125)
+  googleId   String?    @db.VarChar(125)
+  categories Category[]
+  projects   Project[]
+  tasks      Task[]
+  payments   Payment[]
+  netWorthId String?    @unique
+  netWorth   NetWorth?
+}
+
+model NetWorth {
+  id               String    @id @unique() @default(cuid())
+  goal             Int?
+  currentWorth     Int
+  startWorth       Int
+  predictionToGoal DateTime?
+  payments         Payment[]
+  userId           String    @unique
+  user             User?     @relation(fields: [userId], references: [id])
+}
+
+model Payment {
+  id              String          @id @unique() @default(cuid())
+  startDate       DateTime?       @default(now())
+  endDate         DateTime?
+  name            String          @db.VarChar(125)
+  description     String?         @db.VarChar(125)
+  parts           Int?
+  timeBasis       String?
+  completed       Boolean?
+  canceled        Boolean?
+  overdue         Boolean?
+  partsPayed      Int?
+  amount          Float
+  created         DateTime        @default(now())
+  transactionType TransactionType
+  createdAt       DateTime        @default(now())
+  userId          String
+  categoryId      String?
+  netWorthId      String?
+  category        Category?       @relation(fields: [categoryId], references: [id])
+  netWorth        NetWorth?       @relation(fields: [netWorthId], references: [id])
+  user            User            @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id       String    @id @unique() @default(cuid())
+  name     String    @db.VarChar(125)
+  spent    Float
+  userId   String
+  user     User      @relation(fields: [userId], references: [id])
+  payments Payment[]
+  projects Project[]
+}
+
+model Project {
+  id          String   @id @unique() @default(cuid())
+  name        String   @db.VarChar(125)
+  description String?  @db.VarChar(255)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  userId      String
+  categoryId  String
+  user        User     @relation(fields: [userId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id])
+  tasks       Task[]
+}
+
+model Task {
+  id          String   @id @unique() @default(cuid())
+  name        String   @db.VarChar(125)
+  description String?  @db.VarChar(255)
+  due         DateTime
+  done        Boolean
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  userId      String
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+enum TransactionType {
+  INCOMING
+  OUTGOING
+}

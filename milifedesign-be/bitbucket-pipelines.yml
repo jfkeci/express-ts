@@ -1,0 +1,37 @@
+image: node:16
+
+definitions:
+    steps:
+        - step: &build
+              name: Build
+              caches:
+                  - node
+              script:
+                  - npm install
+                  - apt-get update
+                  - apt-get install zip
+                  - zip -r application.zip . -x .git/\*
+              artifacts: 
+                  - application.zip
+pipelines:
+  branches:
+    develop:
+        - step: *build
+        - step:
+            name: Staging
+            trigger: automatic
+            deployment: staging
+            script:
+                - echo "Deploying to development environment"
+                - pipe: atlassian/aws-elasticbeanstalk-deploy:1.0.2
+                  variables:
+                    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                    AWS_DEFAULT_REGION: 'eu-central-1'
+                    APPLICATION_NAME: $APPLICATION_STAGING_NAME
+                    ENVIRONMENT_NAME: $ENVIRONMENT_STAGING_NAME
+                    COMMAND: 'all'
+                    ZIP_FILE: 'application.zip'
+                    S3_BUCKET: 'elasticbeanstalk-eu-central-1-415924029501'
+                    VERSION_LABEL: 'deploy-$BITBUCKET_BUILD_NUMBER-multiple'
+
